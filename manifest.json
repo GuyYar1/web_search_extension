@@ -1,26 +1,24 @@
 {
   "manifest_version": 3,
-  "name": "New Tab Opener",
+  "name": "Text Search Extension",
   "version": "1.0",
-  "description": "Open a new tab in the current browser",
+  "description": "Search for specific text in new tabs",
   "permissions": ["activeTab"],
   "action": {
     "default_title": "Open New Tab",
     "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"]
-    }
-  ],
+      {
+        "matches": ["<all_urls>"],
+        "js": ["content.js"],
+        "css": ["styles.css"]
+      }
+    ],
     "default_icon": {
       "16": "icon16.png",
       "48": "icon48.png",
       "128": "icon128.png"
     },
     "default_popup": "popup.html"
-  },
-  "background": {
-    "service_worker": "background.js"
   },
   "chrome_url_overrides": {
     "newtab": "newTabOverride.html"
