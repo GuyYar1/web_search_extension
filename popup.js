@@ -1,5 +1,3 @@
-// popup.js
-
 document.getElementById('searchButton').addEventListener('click', () => {
   const url = document.getElementById('urlInput').value;
   const searchText = document.getElementById('searchInput').value;
@@ -25,9 +23,38 @@ document.getElementById('searchButton').addEventListener('click', () => {
         },
         args: [searchText],
       }, (result) => {
+        if (chrome.runtime.lastError) {
+          console.error('Error executing script:', chrome.runtime.lastError.message);
+          return;
+        }
+
         if (result && result[0]) {
+          chrome.notifications.create({
+            type: 'basic',
+            iconUrl: 'icon.png',
+            title: 'Search Result',
+            message: 'Text found in the current tab!',
+          }, (notificationId) => {
+            if (chrome.runtime.lastError) {
+              console.error('Error creating notification:', chrome.runtime.lastError.message);
+            } else {
+              console.log('Notification created successfully with ID:', notificationId);
+            }
+          });
           console.log('Text found in the current tab!');
         } else {
+          chrome.notifications.create({
+            type: 'basic',
+            iconUrl: 'icon16.png',
+            title: 'Search Result',
+            message: 'Text not found in the current tab.',
+          }, (notificationId) => {
+            if (chrome.runtime.lastError) {
+              console.error('Error creating notification:', chrome.runtime.lastError.message);
+            } else {
+              console.log('Notification created successfully with ID:', notificationId);
+            }
+          });
           console.log('Text not found in the current tab.');
         }
       });
@@ -54,9 +81,38 @@ document.getElementById('searchButton').addEventListener('click', () => {
             },
             args: [searchText],
           }, (result) => {
+            if (chrome.runtime.lastError) {
+              console.error('Error executing script:', chrome.runtime.lastError.message);
+              return;
+            }
+
             if (result && result[0]) {
+              chrome.notifications.create({
+                type: 'basic',
+                iconUrl: 'icon16.png',
+                title: 'Search Result',
+                message: 'Text found in the new tab!',
+              }, (notificationId) => {
+                if (chrome.runtime.lastError) {
+                  console.error('Error creating notification:', chrome.runtime.lastError.message);
+                } else {
+                  console.log('Notification created successfully with ID:', notificationId);
+                }
+              });
               console.log('Text found in the new tab!');
             } else {
+              chrome.notifications.create({
+                type: 'basic',
+                iconUrl: 'icon16.png',
+                title: 'Search Result',
+                message: 'Text not found in the new tab.',
+              }, (notificationId) => {
+                if (chrome.runtime.lastError) {
+                  console.error('Error creating notification:', chrome.runtime.lastError.message);
+                } else {
+                  console.log('Notification created successfully with ID:', notificationId);
+                }
+              });
               console.log('Text not found in the new tab.');
             }
           });

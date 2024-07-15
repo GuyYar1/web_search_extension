@@ -3,23 +3,28 @@
   "name": "Text Search Extension",
   "version": "1.0",
   "description": "Search for specific text in new tabs",
-  "permissions": ["activeTab", "scripting", "storage", "tabs"],
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "tabs",
+    "notifications"
+  ],
   "action": {
     "default_title": "Open New Tab",
-    "content_scripts": [
-      {
-        "matches": ["<all_urls>"],
-        "js": ["content.js"],
-        "css": ["styles.css"]
-      }
-    ],
+    "default_popup": "popup.html",
     "default_icon": {
       "16": "icon16.png",
       "48": "icon48.png",
       "128": "icon128.png"
-    },
-    "default_popup": "popup.html"
+    }
   },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["content.js"]    
+    }
+  ],
   "chrome_url_overrides": {
     "newtab": "newTabOverride.html"
   }
