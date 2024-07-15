@@ -1,5 +1,5 @@
 document.getElementById('searchButton').addEventListener('click', () => {
-
+  console.log("Hello, world1!");
   const url = document.getElementById('urlInput').value;
   const searchText = document.getElementById('searchInput').value;
   // Open a new tab with the specified URL
@@ -14,6 +14,7 @@ document.getElementById('searchButton').addEventListener('click', () => {
           console.log('Text not found in the new tab.');
         }
       });
-    }, 60000); // 1 minute delay
+    }, 600); // 1 minute delay
   });
 });
+console.log("Hello, world3!");
