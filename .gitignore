@@ -1,0 +1,10 @@
+
+dist/bundle.js
+node_modules/.bin/acorn
+node_modules/.bin/acorn.cmd
+node_modules/.bin/browserslist
+node_modules/.bin/browserslist.cmd
+node_modules/.bin/browserslist.ps1
+/node_modules/.bin
+/node_modules/@discoveryjs/json-ext
+/node_modules

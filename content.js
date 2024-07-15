@@ -1,4 +1,7 @@
 // content.js
+console.log("Jarch");
+
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'search') {
     // Search for text in the page content
