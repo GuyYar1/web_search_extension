@@ -15,9 +15,9 @@ document.getElementById('searchButton').addEventListener('click', () => {
         handleSearchResult(result, 'current tab');
       });
     });
-  } else {
+  } else if (url.trim() !== '') {
     // Handle opening a new tab with the specified URL
-    chrome.tabs.create({ url }, (newTab) => {
+    chrome.tabs.create({ url, active: false }, (newTab) => {
       // Wait for the new tab to load
       chrome.tabs.onUpdated.addListener(function listener(tabId, changeInfo) {
         if (tabId === newTab.id && changeInfo.status === 'complete') {
@@ -34,6 +34,8 @@ document.getElementById('searchButton').addEventListener('click', () => {
         }
       });
     });
+  } else {
+    console.error('Please enter a search text or URL.');
   }
 });
 
@@ -80,7 +82,6 @@ function searchAndHighlightText(searchText) {
 
   return found;
 }
-
 
 function handleSearchResult(result, tabType) {
   if (chrome.runtime.lastError) {
