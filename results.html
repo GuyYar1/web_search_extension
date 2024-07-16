@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Search Results</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+    }
+    #resultsContainer {
+      width: 90%;
+      max-width: 1200px;
+      background: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border-spacing: 0;
+      table-layout: fixed;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+      word-wrap: break-word;
+    }
+    th {
+      background-color: #4CAF50;
+      color: white;
+    }
+    tbody tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+    tbody tr:hover {
+      background-color: #ddd;
+    }
+    tbody {
+      display: block;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+    thead, tbody tr {
+      display: table;
+      width: 100%;
+      table-layout: fixed;
+    }
+    .no-results {
+      text-align: center;
+      padding: 20px;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <div id="resultsContainer">
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 5%;">Index</th>
+          <th style="width: 75%;">URL</th>
+          <th style="width: 20%;">Find Result</th>
+        </tr>
+      </thead>
+      <tbody id="resultsTableBody">
+        <!-- Results will be populated here -->
+      </tbody>
+    </table>
+    <div id="noResultsMessage" class="no-results" style="display:none;">No search results found.</div>
+  </div>
+  <script src="results.js"></script>
+</body>
+</html>
