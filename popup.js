@@ -3,124 +3,75 @@ document.getElementById('searchButton').addEventListener('click', () => {
   const searchText = document.getElementById('searchInput').value;
 
   if (url.trim() === '' && searchText.trim() !== '') {
-    // Get the active tab (current tab) for searching
+    // Handle searching in the current tab
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       const currentTab = tabs[0];
 
-      // Search for the specified text in the current tab
       chrome.scripting.executeScript({
         target: { tabId: currentTab.id },
-        function: (searchText) => {
-          const found = document.body.innerText.includes(searchText);
-          if (found) {
-            // Highlight the matching text with a yellow background
-            const highlightedElements = document.querySelectorAll(`*:contains("${searchText}")`);
-            highlightedElements.forEach((element) => {
-              element.style.backgroundColor = 'yellow';
-            });
-          }
-          return found;
-        },
+        function: searchAndHighlightText,
         args: [searchText],
       }, (result) => {
-        if (chrome.runtime.lastError) {
-          console.error('Error executing script:', chrome.runtime.lastError.message);
-          return;
-        }
-
-        if (result && result[0]) {
-          chrome.notifications.create({
-            type: 'basic',
-            iconUrl: 'icon.png',
-            title: 'Search Result',
-            message: 'Text found in the current tab!',
-          }, (notificationId) => {
-            if (chrome.runtime.lastError) {
-              console.error('Error creating notification:', chrome.runtime.lastError.message);
-            } else {
-              console.log('Notification created successfully with ID:', notificationId);
-            }
-          });
-          console.log('Text found in the current tab!');
-        } else {
-          chrome.notifications.create({
-            type: 'basic',
-            iconUrl: 'icon16.png',
-            title: 'Search Result',
-            message: 'Text not found in the current tab.',
-          }, (notificationId) => {
-            if (chrome.runtime.lastError) {
-              console.error('Error creating notification:', chrome.runtime.lastError.message);
-            } else {
-              console.log('Notification created successfully with ID:', notificationId);
-            }
-          });
-          console.log('Text not found in the current tab.');
-        }
+        handleSearchResult(result, 'current tab');
       });
     });
   } else {
-    // Open a new tab with the specified URL
+    // Handle opening a new tab with the specified URL
     chrome.tabs.create({ url }, (newTab) => {
       // Wait for the new tab to load
       chrome.tabs.onUpdated.addListener(function listener(tabId, changeInfo) {
         if (tabId === newTab.id && changeInfo.status === 'complete') {
-          // Search for the specified text in the new tab
           chrome.scripting.executeScript({
             target: { tabId: newTab.id },
-            function: (searchText) => {
-              const found = document.body.innerText.includes(searchText);
-              if (found) {
-                // Highlight the matching text with a yellow background
-                const highlightedElements = document.querySelectorAll(`*:contains("${searchText}")`);
-                highlightedElements.forEach((element) => {
-                  element.style.backgroundColor = 'yellow';
-                });
-              }
-              return found;
-            },
+            function: searchAndHighlightText,
             args: [searchText],
           }, (result) => {
-            if (chrome.runtime.lastError) {
-              console.error('Error executing script:', chrome.runtime.lastError.message);
-              return;
-            }
-
-            if (result && result[0]) {
-              chrome.notifications.create({
-                type: 'basic',
-                iconUrl: 'icon16.png',
-                title: 'Search Result',
-                message: 'Text found in the new tab!',
-              }, (notificationId) => {
-                if (chrome.runtime.lastError) {
-                  console.error('Error creating notification:', chrome.runtime.lastError.message);
-                } else {
-                  console.log('Notification created successfully with ID:', notificationId);
-                }
-              });
-              console.log('Text found in the new tab!');
-            } else {
-              chrome.notifications.create({
-                type: 'basic',
-                iconUrl: 'icon16.png',
-                title: 'Search Result',
-                message: 'Text not found in the new tab.',
-              }, (notificationId) => {
-                if (chrome.runtime.lastError) {
-                  console.error('Error creating notification:', chrome.runtime.lastError.message);
-                } else {
-                  console.log('Notification created successfully with ID:', notificationId);
-                }
-              });
-              console.log('Text not found in the new tab.');
-            }
+            handleSearchResult(result, 'new tab');
           });
 
-          // Remove the listener after executing the search
+          // Clean up listener after executing search
           chrome.tabs.onUpdated.removeListener(listener);
         }
       });
     });
   }
 });
+
+function searchAndHighlightText(searchText) {
+  const found = document.body.innerText.includes(searchText);
+  if (found) {
+    // Highlight matching text with a yellow background
+    const elements = document.querySelectorAll('body, body *');
+    elements.forEach((element) => {
+      if (element.innerText.includes(searchText)) {
+        element.style.backgroundColor = 'yellow';
+      }
+    });
+  }
+  return found;
+}
+
+function handleSearchResult(result, tabType) {
+  if (chrome.runtime.lastError) {
+    console.error('Error executing script:', chrome.runtime.lastError.message);
+    return;
+  }
+
+  if (result && result[0] && result[0].result) {
+    chrome.notifications.create({
+      type: 'basic',
+      iconUrl: 'icon16.png',
+      title: 'Search Result',
+      message: `Text found in the ${tabType}!`,
+    });
+    console.log(`Text found in the ${tabType}!`);
+  } else {
+    chrome.notifications.create({
+      type: 'basic',
+      iconUrl: 'icon16.png',
+      title: 'Search Result',
+      message: `Text not found in the ${tabType}.`,
+    });
+    console.log(`Text not found in the ${tabType}.`);
+  }
+}
