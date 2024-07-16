@@ -12,12 +12,12 @@ document.getElementById('searchButton').addEventListener('click', () => {
         function: searchAndHighlightText,
         args: [searchText],
       }, (result) => {
-        handleSearchResult(result, 'current tab');
+        handleSearchResult(result, 'current tab', searchText);
       });
     });
   } else if (url.trim() !== '') {
     // Handle opening a new tab with the specified URL
-    chrome.tabs.create({ url, active: false }, (newTab) => {
+    chrome.tabs.create({ url: url, active: false }, (newTab) => {
       // Wait for the new tab to load
       chrome.tabs.onUpdated.addListener(function listener(tabId, changeInfo) {
         if (tabId === newTab.id && changeInfo.status === 'complete') {
@@ -26,7 +26,7 @@ document.getElementById('searchButton').addEventListener('click', () => {
             function: searchAndHighlightText,
             args: [searchText],
           }, (result) => {
-            handleSearchResult(result, 'new tab');
+            handleSearchResult(result, 'new tab', searchText);
           });
 
           // Clean up listener after executing search
@@ -83,7 +83,7 @@ function searchAndHighlightText(searchText) {
   return found;
 }
 
-function handleSearchResult(result, tabType) {
+function handleSearchResult(result, tabType, searchText) {
   if (chrome.runtime.lastError) {
     console.error('Error executing script:', chrome.runtime.lastError.message);
     return;
@@ -94,16 +94,16 @@ function handleSearchResult(result, tabType) {
       type: 'basic',
       iconUrl: 'icon16.png',
       title: 'Search Result',
-      message: `Text found in the ${tabType}!`,
+      message: `Text '${searchText}' found in the ${tabType}!`,
     });
-    console.log(`Text found in the ${tabType}!`);
+    console.log(`Text '${searchText}' found in the ${tabType}!`);
   } else {
     chrome.notifications.create({
       type: 'basic',
       iconUrl: 'icon16.png',
       title: 'Search Result',
-      message: `Text not found in the ${tabType}.`,
+      message: `Text '${searchText}' not found in the ${tabType}.`,
     });
-    console.log(`Text not found in the ${tabType}.`);
+    console.log(`Text '${searchText}' not found in the ${tabType}.`);
   }
 }
